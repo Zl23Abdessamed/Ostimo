@@ -1,0 +1,5 @@
+Upgraded:
+  kernel 6.12.1-200.fc40.x86_64 -> 6.12.3-200.fc40.x86_64   
+
+Added:
+  ripgrep 14.1.0-2.fc40.x86_64

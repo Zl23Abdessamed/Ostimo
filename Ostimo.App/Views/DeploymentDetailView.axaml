@@ -1,0 +1,276 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Ostimo.App.ViewModels"
+             xmlns:views="using:Ostimo.App.Views"
+             xmlns:converters="using:Ostimo.App.Converters"
+             mc:Ignorable="d" d:DesignWidth="620" d:DesignHeight="640"
+             x:Class="Ostimo.App.Views.DeploymentDetailView"
+             x:DataType="vm:DeploymentViewModel">
+
+  <!--
+    Right pane. One scrollable column (hero -> tiles -> package changes) with
+    the action bar pinned below it, outside the scroller, so Roll back / Pin
+    never require scrolling to reach (OstimoUi.md §3.2).
+  -->
+  <Grid RowDefinitions="*,Auto">
+
+    <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,0,10,0">
+      <StackPanel Spacing="14" Margin="0,0,0,4">
+
+        <!-- ===================== Hero ===================== -->
+        <Border Classes="glass rv0" Padding="28,26">
+          <StackPanel Spacing="16">
+
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Text="{Binding Version}"
+                         FontSize="34" FontWeight="Bold"
+                         Foreground="{DynamicResource TitleGradientBrush}"
+                         TextTrimming="CharacterEllipsis"
+                         VerticalAlignment="Center"
+                         ToolTip.Tip="{Binding Version}" />
+
+              <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="12,0,0,0">
+                <!-- Booted: pulsing live dot -->
+                <Border Classes="badge" IsVisible="{Binding IsBooted}"
+                        Background="{DynamicResource AccentMutedBrush}"
+                        BorderBrush="{DynamicResource AccentBorderBrush}">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Panel Width="12" Height="12" VerticalAlignment="Center">
+                      <Ellipse Classes="pulse" Width="8" Height="8" Fill="{DynamicResource AccentBrush}" />
+                      <Ellipse Width="8" Height="8" Fill="{DynamicResource AccentBrush}" />
+                    </Panel>
+                    <TextBlock Text="Booted" FontSize="12" FontWeight="SemiBold"
+                               Foreground="{DynamicResource AccentBrush}" />
+                  </StackPanel>
+                </Border>
+                <!-- Pinned -->
+                <Border Classes="badge" IsVisible="{Binding IsPinned}"
+                        Background="{DynamicResource PinnedMutedBrush}"
+                        BorderBrush="{DynamicResource PinnedBrush}">
+                  <StackPanel Orientation="Horizontal" Spacing="6">
+                    <Path Data="M 12 17 L 12 22 M 5 17 L 19 17 L 17 13 L 17 5 L 19 3 L 5 3 L 7 5 L 7 13 Z"
+                          Stroke="{DynamicResource PinnedBrush}" StrokeThickness="2"
+                          StrokeLineCap="Round" StrokeJoin="Round"
+                          Width="11" Height="11" Stretch="Uniform" VerticalAlignment="Center" />
+                    <TextBlock Text="Pinned" FontSize="12" FontWeight="SemiBold"
+                               Foreground="{DynamicResource PinnedBrush}" />
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+            </Grid>
+
+            <!-- Image + build time, as icon rows rather than punctuation-glued text -->
+            <StackPanel Orientation="Horizontal" Spacing="24">
+              <StackPanel Orientation="Horizontal" Spacing="8"
+                          ToolTip.Tip="{Binding FullImageReference}">
+                <Path Data="M 12 2 L 21 7 L 21 17 L 12 22 L 3 17 L 3 7 Z M 12 12 L 12 22 M 3 7 L 12 12 L 21 7"
+                      Stroke="{DynamicResource TextSecondaryBrush}" StrokeThickness="1.8"
+                      StrokeLineCap="Round" StrokeJoin="Round"
+                      Width="16" Height="16" Stretch="Uniform" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding ImageName}" Classes="muted" FontSize="14"
+                           TextTrimming="CharacterEllipsis" MaxWidth="260" VerticalAlignment="Center" />
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <Path Data="M 12 2 A 10 10 0 1 0 12 22 A 10 10 0 1 0 12 2 Z M 12 6 L 12 12 L 16 14"
+                      Stroke="{DynamicResource TextSecondaryBrush}" StrokeThickness="1.8"
+                      StrokeLineCap="Round" StrokeJoin="Round"
+                      Width="16" Height="16" Stretch="Uniform" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding BuiltDisplay}" Classes="muted" FontSize="14" VerticalAlignment="Center" />
+              </StackPanel>
+            </StackPanel>
+
+            <!-- Staged note (OstimoUi.md §3.4): informational, not a warning -->
+            <Border IsVisible="{Binding IsStaged}" CornerRadius="14" Padding="14,12"
+                    Background="{DynamicResource AccentMutedBrush}"
+                    BorderBrush="{DynamicResource AccentBorderBrush}" BorderThickness="1">
+              <Grid ColumnDefinitions="Auto,*">
+                <Path Data="M 13 2 L 3 14 L 12 14 L 11 22 L 21 10 L 12 10 Z"
+                      Stroke="{DynamicResource Accent2Brush}" StrokeThickness="1.8"
+                      StrokeLineCap="Round" StrokeJoin="Round"
+                      Width="18" Height="18" Stretch="Uniform" Margin="0,0,12,0" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1"
+                           Text="This update is downloaded and will take effect on your next reboot."
+                           TextWrapping="Wrap" VerticalAlignment="Center" />
+              </Grid>
+            </Border>
+
+          </StackPanel>
+        </Border>
+
+        <!-- ===================== Tiles ===================== -->
+        <Grid Classes="rv1" ColumnDefinitions="*,*,*" ColumnSpacing="12">
+
+          <!-- Commit + copy -->
+          <Border Grid.Column="0" Classes="tile">
+            <Grid ColumnDefinitions="*,Auto">
+              <StackPanel Spacing="5" VerticalAlignment="Center">
+                <TextBlock Text="Commit" Classes="muted" FontSize="12" />
+                <TextBlock Text="{Binding TruncatedChecksum}"
+                           Classes="mono" FontSize="14" FontWeight="Medium"
+                           TextTrimming="CharacterEllipsis"
+                           ToolTip.Tip="{Binding FullChecksum}" />
+              </StackPanel>
+              <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center" Margin="6,0,0,0">
+                <!-- "Copied" toast: fades + slides in when the flag flips,
+                     out again when the ViewModel clears it (~1.5s). -->
+                <Border Classes="toast" Classes.show="{Binding ShowCopiedConfirmation}"
+                        IsHitTestVisible="False" CornerRadius="999" Padding="8,3"
+                        Background="{DynamicResource DiffAddedMutedBrush}">
+                  <StackPanel Orientation="Horizontal" Spacing="4">
+                    <Path Data="M 5 12 L 10 17 L 19 7"
+                          Stroke="{DynamicResource DiffAddedBrush}" StrokeThickness="2.6"
+                          StrokeLineCap="Round" StrokeJoin="Round"
+                          Width="10" Height="10" Stretch="Uniform" VerticalAlignment="Center" />
+                    <TextBlock Text="Copied" FontSize="11" FontWeight="SemiBold"
+                               Foreground="{DynamicResource DiffAddedBrush}" />
+                  </StackPanel>
+                </Border>
+                <Button Classes="pill icon" Width="32" Height="32"
+                        Click="OnCopyChecksumClick" ToolTip.Tip="Copy full commit hash">
+                  <Path Data="M 11 9 L 20 9 A 2 2 0 0 1 22 11 L 22 20 A 2 2 0 0 1 20 22 L 11 22 A 2 2 0 0 1 9 20 L 9 11 A 2 2 0 0 1 11 9 Z M 5 15 L 4 15 A 2 2 0 0 1 2 13 L 2 4 A 2 2 0 0 1 4 2 L 13 2 A 2 2 0 0 1 15 4 L 15 5"
+                        Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="2"
+                        StrokeLineCap="Round" StrokeJoin="Round"
+                        Width="14" Height="14" Stretch="Uniform" />
+                </Button>
+              </StackPanel>
+            </Grid>
+          </Border>
+
+          <!-- Pinned -->
+          <Border Grid.Column="1" Classes="tile">
+            <StackPanel Spacing="5">
+              <TextBlock Text="Pinned" Classes="muted" FontSize="12" />
+              <TextBlock Classes="state pin" Classes.on="{Binding IsPinned}"
+                         Text="{Binding IsPinned, Converter={x:Static converters:BoolToYesNoConverter.Instance}}"
+                         FontSize="16" FontWeight="SemiBold" />
+            </StackPanel>
+          </Border>
+
+          <!-- Staged: no action, it's a side effect of pulling an update (§3.2) -->
+          <Border Grid.Column="2" Classes="tile">
+            <StackPanel Spacing="5">
+              <TextBlock Text="Staged" Classes="muted" FontSize="12" />
+              <TextBlock Classes="state stage" Classes.on="{Binding IsStaged}"
+                         Text="{Binding IsStaged, Converter={x:Static converters:BoolToYesNoConverter.Instance}}"
+                         FontSize="16" FontWeight="SemiBold" />
+            </StackPanel>
+          </Border>
+        </Grid>
+
+        <!-- ===================== Package changes ===================== -->
+        <Border Classes="glass rv2" Padding="22,20">
+          <StackPanel Spacing="16">
+
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Text="Package changes" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center" />
+              <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="Compare against" Classes="muted" VerticalAlignment="Center" />
+                <ComboBox Classes="ostimo"
+                          ItemsSource="{Binding CompareTargets}"
+                          SelectedItem="{Binding CompareAgainst}">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:DeploymentViewModel">
+                      <TextBlock Text="{Binding Version}" />
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+              </StackPanel>
+            </Grid>
+
+            <views:DiffView DataContext="{Binding Diff}" />
+
+          </StackPanel>
+        </Border>
+
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- ===================== Action bar (pinned) ===================== -->
+    <Border Grid.Row="1" Classes="glass rv3" Margin="0,14,10,0" Padding="18,14" CornerRadius="20">
+      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+
+        <!-- Status text: rollback state, why rollback is disabled, pin state.
+             The disabled-reason is inline, not tooltip-only, so keyboard and
+             touch users can read it (OstimoUi.md §5.1). -->
+        <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="3">
+          <TextBlock Text="{Binding RollbackStatusMessage}"
+                     IsVisible="{Binding RollbackStatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                     FontWeight="SemiBold" TextWrapping="Wrap" />
+          <TextBlock Text="{Binding RollbackTooltip}"
+                     IsVisible="{Binding RollbackTooltip, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                     Classes="muted" FontSize="12" TextWrapping="Wrap" />
+          <TextBlock Text="{Binding PinStatusMessage}"
+                     IsVisible="{Binding PinStatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                     Classes="muted" FontSize="12" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+
+          <Button Classes="pill"
+                  Command="{Binding TogglePinCommand}"
+                  IsEnabled="{Binding !IsPinActionInFlight}">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Path Data="M 12 17 L 12 22 M 5 17 L 19 17 L 17 13 L 17 5 L 19 3 L 5 3 L 7 5 L 7 13 Z"
+                    Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="2"
+                    StrokeLineCap="Round" StrokeJoin="Round"
+                    Width="14" Height="14" Stretch="Uniform" VerticalAlignment="Center" />
+              <TextBlock Text="{Binding PinButtonLabel}" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+
+          <!-- Click, not Command, on purpose: the confirmation dialog must sit
+               between the click and the privileged action (OstimoUi.md §5.1,
+               RpmOstree.md §11 step 6). See code-behind. -->
+          <Button Classes="pill danger"
+                  Click="OnRollbackClick"
+                  IsEnabled="{Binding CanRollback}"
+                  ToolTip.Tip="{Binding RollbackTooltip}">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Path Data="M 1 4 L 1 10 L 7 10 M 3.51 15 A 9 9 0 1 0 5.64 5.64 L 1 10"
+                    Stroke="White" StrokeThickness="2.2"
+                    StrokeLineCap="Round" StrokeJoin="Round"
+                    Width="14" Height="14" Stretch="Uniform" VerticalAlignment="Center" />
+              <TextBlock Text="Roll back to this" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+
+        </StackPanel>
+      </Grid>
+    </Border>
+
+  </Grid>
+
+  <UserControl.Styles>
+
+    <!-- Copy toast: hidden by default, eased in when .show is applied. -->
+    <Style Selector="Border.toast">
+      <Setter Property="Opacity" Value="0" />
+      <Setter Property="RenderTransform" Value="translateX(8px) scale(0.85)" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <DoubleTransition Property="Opacity" Duration="0:0:0.2" />
+          <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.28" Easing="BackEaseOut" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="Border.toast.show">
+      <Setter Property="Opacity" Value="1" />
+      <Setter Property="RenderTransform" Value="translateX(0px) scale(1)" />
+    </Style>
+
+    <!-- Yes/No values light up in their own hue when true -->
+    <Style Selector="TextBlock.state">
+      <Setter Property="Foreground" Value="{DynamicResource TextTertiaryBrush}" />
+    </Style>
+    <Style Selector="TextBlock.state.pin.on">
+      <Setter Property="Foreground" Value="{DynamicResource PinnedBrush}" />
+    </Style>
+    <Style Selector="TextBlock.state.stage.on">
+      <Setter Property="Foreground" Value="{DynamicResource Accent2Brush}" />
+    </Style>
+
+  </UserControl.Styles>
+
+</UserControl>

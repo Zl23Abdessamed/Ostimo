@@ -1,0 +1,289 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- ================================================================
+       SURFACES
+       ================================================================ -->
+  <Style Selector="Border.glass">
+    <Setter Property="Background" Value="{DynamicResource GlassBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource GlassBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="20" />
+    <Setter Property="BoxShadow" Value="0 16 40 0 #2E000000" />
+  </Style>
+
+  <!-- Small info tile (metadata) -->
+  <Style Selector="Border.tile">
+    <Setter Property="Background" Value="{DynamicResource GlassBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource GlassBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="14" />
+    <Setter Property="Padding" Value="16,14" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="BorderBrush" Duration="0:0:0.2" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Border.tile:pointerover">
+    <Setter Property="BorderBrush" Value="{DynamicResource AccentBorderBrush}" />
+  </Style>
+
+  <!-- Pill / badge -->
+  <Style Selector="Border.badge">
+    <Setter Property="CornerRadius" Value="999" />
+    <Setter Property="Padding" Value="10,4" />
+    <Setter Property="BorderThickness" Value="1" />
+  </Style>
+
+  <!-- ================================================================
+       TEXT
+       ================================================================ -->
+  <Style Selector="TextBlock.muted">
+    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+  </Style>
+  <Style Selector="TextBlock.faint">
+    <Setter Property="Foreground" Value="{DynamicResource TextTertiaryBrush}" />
+  </Style>
+  <Style Selector="TextBlock.mono">
+    <Setter Property="FontFamily" Value="monospace" />
+  </Style>
+
+  <!-- ================================================================
+       BUTTONS  (pill = shared template; primary/danger/ghost/icon = looks)
+       ================================================================ -->
+  <Style Selector="Button.pill">
+    <Setter Property="Padding" Value="18,10" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+    <Setter Property="Background" Value="{DynamicResource GlassStrongBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource GlassBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <!-- keyboard focus ring (never suppressed, OstimoUi.md §7) -->
+          <Border Name="Ring" Margin="-3" CornerRadius="15" BorderThickness="2"
+                  BorderBrush="Transparent" IsHitTestVisible="False" />
+          <Border Name="Chrome"
+                  Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="{TemplateBinding CornerRadius}"
+                  Padding="{TemplateBinding Padding}"
+                  RenderTransform="scale(1)">
+            <Border.Transitions>
+              <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.16" Easing="CubicEaseOut" />
+                <BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.22" />
+              </Transitions>
+            </Border.Transitions>
+            <ContentPresenter Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Foreground="{TemplateBinding Foreground}"
+                              FontSize="{TemplateBinding FontSize}"
+                              FontWeight="{TemplateBinding FontWeight}"
+                              HorizontalContentAlignment="Center"
+                              VerticalContentAlignment="Center"
+                              RecognizesAccessKey="True" />
+          </Border>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="Button.pill:pointerover /template/ Border#Chrome">
+    <Setter Property="RenderTransform" Value="scale(1.03)" />
+    <Setter Property="BorderBrush" Value="{DynamicResource AccentBorderBrush}" />
+  </Style>
+  <Style Selector="Button.pill:pressed /template/ Border#Chrome">
+    <Setter Property="RenderTransform" Value="scale(0.96)" />
+  </Style>
+  <Style Selector="Button.pill:focus-visible /template/ Border#Ring">
+    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+  </Style>
+  <Style Selector="Button.pill:disabled /template/ Border#Chrome">
+    <Setter Property="Opacity" Value="0.4" />
+    <Setter Property="RenderTransform" Value="scale(1)" />
+  </Style>
+
+  <!-- Primary: accent gradient with a living glow -->
+  <Style Selector="Button.primary">
+    <Setter Property="Background" Value="{DynamicResource AccentGradientBrush}" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.primary /template/ Border#Chrome">
+    <Setter Property="BoxShadow" Value="0 6 20 0 #668B7BFF" />
+  </Style>
+  <Style Selector="Button.primary:pointerover /template/ Border#Chrome">
+    <Setter Property="BoxShadow" Value="0 8 32 2 #A08B7BFF" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+  </Style>
+
+  <!-- Danger: rollback -->
+  <Style Selector="Button.danger">
+    <Setter Property="Background" Value="{DynamicResource DangerGradientBrush}" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.danger /template/ Border#Chrome">
+    <Setter Property="BoxShadow" Value="0 6 20 0 #66F43F5E" />
+  </Style>
+  <Style Selector="Button.danger:pointerover /template/ Border#Chrome">
+    <Setter Property="BoxShadow" Value="0 8 32 2 #A0F43F5E" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.danger:focus-visible /template/ Border#Ring">
+    <Setter Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
+  </Style>
+
+  <!-- Icon-only button -->
+  <Style Selector="Button.icon">
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Width" Value="36" />
+    <Setter Property="Height" Value="36" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.icon:pointerover /template/ Border#Chrome">
+    <Setter Property="Background" Value="{DynamicResource GlassStrongBrush}" />
+  </Style>
+
+  <!-- ================================================================
+       COMBOBOX — re-skinned through Fluent's own resource keys
+       ================================================================ -->
+  <Style Selector="ComboBox.ostimo">
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Padding" Value="14,9" />
+    <Setter Property="MinWidth" Value="200" />
+    <Style.Resources>
+      <SolidColorBrush x:Key="ComboBoxBackground" Color="{DynamicResource GlassColor}" />
+      <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="{DynamicResource GlassStrongColor}" />
+      <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="{DynamicResource GlassStrongColor}" />
+      <SolidColorBrush x:Key="ComboBoxBackgroundUnfocused" Color="{DynamicResource GlassColor}" />
+      <SolidColorBrush x:Key="ComboBoxBorderBrush" Color="{DynamicResource GlassBorderColor}" />
+      <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver" Color="{DynamicResource AccentColor}" />
+      <SolidColorBrush x:Key="ComboBoxBorderBrushPressed" Color="{DynamicResource AccentColor}" />
+      <SolidColorBrush x:Key="ComboBoxBackgroundBorderBrushFocused" Color="{DynamicResource AccentColor}" />
+      <SolidColorBrush x:Key="ComboBoxDropDownBackground" Color="{DynamicResource PopupColor}" />
+      <SolidColorBrush x:Key="ComboBoxDropDownBorderBrush" Color="{DynamicResource GlassBorderColor}" />
+      <SolidColorBrush x:Key="ComboBoxForeground" Color="{DynamicResource TextPrimaryColor}" />
+    </Style.Resources>
+  </Style>
+
+  <!-- ================================================================
+       MOTION LIBRARY
+       Used sparingly: one load sequence, then motion only in answer to
+       something the person did (select, expand, copy, refresh).
+       ================================================================ -->
+
+  <!-- Reveal: fade + rise, with a delay tier. FillMode=Backward holds the
+       start frame during the delay and leaves no lingering animated value
+       behind, so hover transitions on the same element keep working. -->
+  <Style Selector="Control.rv0">
+    <Style.Animations>
+      <Animation Duration="0:0:0.5" Easing="CubicEaseOut" FillMode="Backward">
+        <KeyFrame Cue="0%"><Setter Property="Opacity" Value="0" /><Setter Property="TranslateTransform.Y" Value="16" /></KeyFrame>
+        <KeyFrame Cue="100%"><Setter Property="Opacity" Value="1" /><Setter Property="TranslateTransform.Y" Value="0" /></KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+  <Style Selector="Control.rv1">
+    <Style.Animations>
+      <Animation Duration="0:0:0.5" Delay="0:0:0.07" Easing="CubicEaseOut" FillMode="Backward">
+        <KeyFrame Cue="0%"><Setter Property="Opacity" Value="0" /><Setter Property="TranslateTransform.Y" Value="16" /></KeyFrame>
+        <KeyFrame Cue="100%"><Setter Property="Opacity" Value="1" /><Setter Property="TranslateTransform.Y" Value="0" /></KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+  <Style Selector="Control.rv2">
+    <Style.Animations>
+      <Animation Duration="0:0:0.5" Delay="0:0:0.14" Easing="CubicEaseOut" FillMode="Backward">
+        <KeyFrame Cue="0%"><Setter Property="Opacity" Value="0" /><Setter Property="TranslateTransform.Y" Value="16" /></KeyFrame>
+        <KeyFrame Cue="100%"><Setter Property="Opacity" Value="1" /><Setter Property="TranslateTransform.Y" Value="0" /></KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+  <Style Selector="Control.rv3">
+    <Style.Animations>
+      <Animation Duration="0:0:0.5" Delay="0:0:0.21" Easing="CubicEaseOut" FillMode="Backward">
+        <KeyFrame Cue="0%"><Setter Property="Opacity" Value="0" /><Setter Property="TranslateTransform.Y" Value="16" /></KeyFrame>
+        <KeyFrame Cue="100%"><Setter Property="Opacity" Value="1" /><Setter Property="TranslateTransform.Y" Value="0" /></KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+
+  <!-- Sidebar slides in from the left on window load. -->
+  <Style Selector="Control.slidein">
+    <Style.Animations>
+      <Animation Duration="0:0:0.7" Easing="QuinticEaseOut" FillMode="Backward">
+        <KeyFrame Cue="0%"><Setter Property="Opacity" Value="0" /><Setter Property="TranslateTransform.X" Value="-40" /></KeyFrame>
+        <KeyFrame Cue="100%"><Setter Property="Opacity" Value="1" /><Setter Property="TranslateTransform.X" Value="0" /></KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+
+  <!-- Refresh spinner: snap-stops when the class is removed. -->
+  <Style Selector="Path.spinning">
+    <Style.Animations>
+      <Animation Duration="0:0:0.9" IterationCount="INFINITE">
+        <KeyFrame Cue="0%"><Setter Property="RotateTransform.Angle" Value="0" /></KeyFrame>
+        <KeyFrame Cue="100%"><Setter Property="RotateTransform.Angle" Value="360" /></KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+
+  <!-- Booted node: radar-style pulse ring. -->
+  <Style Selector="Ellipse.pulse">
+    <Style.Animations>
+      <Animation Duration="0:0:2.2" IterationCount="INFINITE" Easing="CubicEaseOut">
+        <KeyFrame Cue="0%"><Setter Property="Opacity" Value="0.7" /><Setter Property="ScaleTransform.ScaleX" Value="0.7" /> <Setter Property="ScaleTransform.ScaleY" Value="0.7" /></KeyFrame>
+        <KeyFrame Cue="100%"><Setter Property="Opacity" Value="0" /><Setter Property="ScaleTransform.ScaleX" Value="2.1" /> <Setter Property="ScaleTransform.ScaleY" Value="2.1" /></KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+
+  <!-- Staged node: dashed ring slowly orbiting ("queued, on its way"). -->
+  <Style Selector="Ellipse.orbit">
+    <Style.Animations>
+      <Animation Duration="0:0:9" IterationCount="INFINITE">
+        <KeyFrame Cue="0%"><Setter Property="RotateTransform.Angle" Value="0" /></KeyFrame>
+        <KeyFrame Cue="100%"><Setter Property="RotateTransform.Angle" Value="360" /></KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+
+  <!-- Gentle hover for hero icons on empty states. -->
+  <Style Selector="Control.float">
+    <Style.Animations>
+      <Animation Duration="0:0:3" IterationCount="INFINITE" PlaybackDirection="Alternate" Easing="SineEaseInOut">
+        <KeyFrame Cue="0%"><Setter Property="TranslateTransform.Y" Value="0" /></KeyFrame>
+        <KeyFrame Cue="100%"><Setter Property="TranslateTransform.Y" Value="-12" /></KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+
+  <!-- Skeleton shimmer while a diff computes. -->
+  <Style Selector="Border.skeleton">
+    <Setter Property="Background" Value="{DynamicResource GlassStrongBrush}" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Height" Value="36" />
+    <Style.Animations>
+      <Animation Duration="0:0:0.9" IterationCount="INFINITE" PlaybackDirection="Alternate" Easing="SineEaseInOut">
+        <KeyFrame Cue="0%"><Setter Property="Opacity" Value="0.35" /></KeyFrame>
+        <KeyFrame Cue="100%"><Setter Property="Opacity" Value="1" /></KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+
+  <!-- Splitter: invisible until hovered. -->
+  <Style Selector="GridSplitter.soft">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="GridSplitter.soft:pointerover">
+    <Setter Property="Background" Value="{DynamicResource AccentMutedBrush}" />
+  </Style>
+
+</Styles>

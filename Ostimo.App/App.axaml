@@ -1,0 +1,21 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Ostimo.App.App"
+             RequestedThemeVariant="Dark">
+  <!-- Dark is the hero look. Set this back to "Default" to follow the system
+       theme; a full Light palette is defined in SemanticColors.axaml and
+       will be picked up live. -->
+
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="avares://Ostimo.App/Styles/SemanticColors.axaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme />
+    <StyleInclude Source="avares://Ostimo.App/Styles/OstimoStyles.axaml" />
+  </Application.Styles>
+</Application>

@@ -1,0 +1,147 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!--
+    Ostimo design tokens. Two theme variants (Dark is the hero look, Light is
+    a full companion, not an afterthought). Every brush lives INSIDE its
+    variant with literal colors so live theme switching just works.
+
+    Legacy keys (AccentBrush, AccentMutedBrush, PinnedBrush, DiffUpgradedBrush,
+    DiffAddedBrush, DiffRemovedBrush, DangerBrush) are kept so nothing else in
+    the project breaks.
+  -->
+
+  <ResourceDictionary.ThemeDictionaries>
+
+    <!-- =========================== DARK =========================== -->
+    <ResourceDictionary x:Key="Dark">
+
+      <!-- raw colors (needed by ComboBox resource overrides) -->
+      <Color x:Key="AccentColor">#8B7BFF</Color>
+      <Color x:Key="GlassColor">#0FFFFFFF</Color>
+      <Color x:Key="GlassStrongColor">#1CFFFFFF</Color>
+      <Color x:Key="GlassBorderColor">#1FFFFFFF</Color>
+      <Color x:Key="PopupColor">#171A38</Color>
+      <Color x:Key="TextPrimaryColor">#F4F5FF</Color>
+
+      <!-- window backdrop -->
+      <LinearGradientBrush x:Key="AppBgBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#0A0C1C" Offset="0" />
+        <GradientStop Color="#10123A" Offset="0.55" />
+        <GradientStop Color="#080A18" Offset="1" />
+      </LinearGradientBrush>
+
+      <!-- glass surfaces -->
+      <SolidColorBrush x:Key="GlassBrush" Color="#0FFFFFFF" />
+      <SolidColorBrush x:Key="GlassStrongBrush" Color="#1CFFFFFF" />
+      <SolidColorBrush x:Key="GlassBorderBrush" Color="#1FFFFFFF" />
+      <SolidColorBrush x:Key="GlassBorderStrongBrush" Color="#38FFFFFF" />
+      <SolidColorBrush x:Key="PopupBrush" Color="#171A38" />
+      <SolidColorBrush x:Key="RailBrush" Color="#2EFFFFFF" />
+
+      <!-- text -->
+      <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F4F5FF" />
+      <SolidColorBrush x:Key="TextSecondaryBrush" Color="#A3A7C7" />
+      <SolidColorBrush x:Key="TextTertiaryBrush" Color="#6E7296" />
+      <LinearGradientBrush x:Key="TitleGradientBrush" StartPoint="0%,0%" EndPoint="100%,0%">
+        <GradientStop Color="#FFFFFF" Offset="0" />
+        <GradientStop Color="#C4BBFF" Offset="0.55" />
+        <GradientStop Color="#7DD3FC" Offset="1" />
+      </LinearGradientBrush>
+
+      <!-- accent -->
+      <SolidColorBrush x:Key="AccentBrush" Color="#8B7BFF" />
+      <SolidColorBrush x:Key="Accent2Brush" Color="#38BDF8" />
+      <SolidColorBrush x:Key="AccentMutedBrush" Color="#268B7BFF" />
+      <SolidColorBrush x:Key="AccentBorderBrush" Color="#598B7BFF" />
+      <LinearGradientBrush x:Key="AccentGradientBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#7C5CFF" Offset="0" />
+        <GradientStop Color="#22B8F0" Offset="1" />
+      </LinearGradientBrush>
+      <LinearGradientBrush x:Key="AccentWashBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#387C5CFF" Offset="0" />
+        <GradientStop Color="#1A22B8F0" Offset="1" />
+      </LinearGradientBrush>
+
+      <!-- status -->
+      <SolidColorBrush x:Key="PinnedBrush" Color="#FBBF24" />
+      <SolidColorBrush x:Key="PinnedMutedBrush" Color="#26FBBF24" />
+      <SolidColorBrush x:Key="DiffUpgradedBrush" Color="#60A5FA" />
+      <SolidColorBrush x:Key="DiffUpgradedMutedBrush" Color="#2660A5FA" />
+      <SolidColorBrush x:Key="DiffAddedBrush" Color="#34D399" />
+      <SolidColorBrush x:Key="DiffAddedMutedBrush" Color="#2634D399" />
+      <SolidColorBrush x:Key="DiffRemovedBrush" Color="#FB7185" />
+      <SolidColorBrush x:Key="DiffRemovedMutedBrush" Color="#26FB7185" />
+      <SolidColorBrush x:Key="DangerBrush" Color="#FB7185" />
+      <SolidColorBrush x:Key="DangerMutedBrush" Color="#26FB7185" />
+      <SolidColorBrush x:Key="DangerBorderBrush" Color="#59FB7185" />
+      <LinearGradientBrush x:Key="DangerGradientBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#E11D48" Offset="0" />
+        <GradientStop Color="#FB5C7C" Offset="1" />
+      </LinearGradientBrush>
+    </ResourceDictionary>
+
+    <!-- =========================== LIGHT =========================== -->
+    <ResourceDictionary x:Key="Light">
+
+      <Color x:Key="AccentColor">#6A4CF0</Color>
+      <Color x:Key="GlassColor">#B3FFFFFF</Color>
+      <Color x:Key="GlassStrongColor">#E6FFFFFF</Color>
+      <Color x:Key="GlassBorderColor">#1F3B3F8F</Color>
+      <Color x:Key="PopupColor">#FFFFFF</Color>
+      <Color x:Key="TextPrimaryColor">#16182E</Color>
+
+      <LinearGradientBrush x:Key="AppBgBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#F6F7FF" Offset="0" />
+        <GradientStop Color="#E8EBFC" Offset="0.6" />
+        <GradientStop Color="#F3F0FF" Offset="1" />
+      </LinearGradientBrush>
+
+      <SolidColorBrush x:Key="GlassBrush" Color="#B3FFFFFF" />
+      <SolidColorBrush x:Key="GlassStrongBrush" Color="#E6FFFFFF" />
+      <SolidColorBrush x:Key="GlassBorderBrush" Color="#1F3B3F8F" />
+      <SolidColorBrush x:Key="GlassBorderStrongBrush" Color="#403B3F8F" />
+      <SolidColorBrush x:Key="PopupBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="RailBrush" Color="#2E3B3F8F" />
+
+      <SolidColorBrush x:Key="TextPrimaryBrush" Color="#16182E" />
+      <SolidColorBrush x:Key="TextSecondaryBrush" Color="#5B5F80" />
+      <SolidColorBrush x:Key="TextTertiaryBrush" Color="#8B8FAE" />
+      <LinearGradientBrush x:Key="TitleGradientBrush" StartPoint="0%,0%" EndPoint="100%,0%">
+        <GradientStop Color="#1E1B4B" Offset="0" />
+        <GradientStop Color="#6A4CF0" Offset="1" />
+      </LinearGradientBrush>
+
+      <SolidColorBrush x:Key="AccentBrush" Color="#6A4CF0" />
+      <SolidColorBrush x:Key="Accent2Brush" Color="#0284C7" />
+      <SolidColorBrush x:Key="AccentMutedBrush" Color="#1F6A4CF0" />
+      <SolidColorBrush x:Key="AccentBorderBrush" Color="#556A4CF0" />
+      <LinearGradientBrush x:Key="AccentGradientBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#6A4CF0" Offset="0" />
+        <GradientStop Color="#0EA5E9" Offset="1" />
+      </LinearGradientBrush>
+      <LinearGradientBrush x:Key="AccentWashBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#286A4CF0" Offset="0" />
+        <GradientStop Color="#140EA5E9" Offset="1" />
+      </LinearGradientBrush>
+
+      <SolidColorBrush x:Key="PinnedBrush" Color="#B7791F" />
+      <SolidColorBrush x:Key="PinnedMutedBrush" Color="#26D69E2E" />
+      <SolidColorBrush x:Key="DiffUpgradedBrush" Color="#2563EB" />
+      <SolidColorBrush x:Key="DiffUpgradedMutedBrush" Color="#1F2563EB" />
+      <SolidColorBrush x:Key="DiffAddedBrush" Color="#0E9F6E" />
+      <SolidColorBrush x:Key="DiffAddedMutedBrush" Color="#1F0E9F6E" />
+      <SolidColorBrush x:Key="DiffRemovedBrush" Color="#E11D48" />
+      <SolidColorBrush x:Key="DiffRemovedMutedBrush" Color="#1FE11D48" />
+      <SolidColorBrush x:Key="DangerBrush" Color="#E11D48" />
+      <SolidColorBrush x:Key="DangerMutedBrush" Color="#1FE11D48" />
+      <SolidColorBrush x:Key="DangerBorderBrush" Color="#55E11D48" />
+      <LinearGradientBrush x:Key="DangerGradientBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+        <GradientStop Color="#E11D48" Offset="0" />
+        <GradientStop Color="#F43F5E" Offset="1" />
+      </LinearGradientBrush>
+    </ResourceDictionary>
+
+  </ResourceDictionary.ThemeDictionaries>
+
+</ResourceDictionary>

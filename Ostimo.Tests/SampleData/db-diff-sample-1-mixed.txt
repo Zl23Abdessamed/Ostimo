@@ -1,0 +1,8 @@
+Upgraded:
+  kernel 6.12.1-200.fc40.x86_64 -> 6.12.3-200.fc40.x86_64
+  firefox 133.0-1.fc40 -> 134.0-1.fc40
+  mesa-libGL 24.1.7-1.fc40 -> 24.2.0-1.fc40
+Added:
+  ripgrep 14.1.0-2.fc40.x86_64
+Removed:
+  some-old-package 1.0-1.fc40.x86_64

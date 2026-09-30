@@ -1,0 +1,97 @@
+{
+  "deployments": [
+    {
+      "unlocked": "none",
+      "requested-local-packages": [],
+      "base-commit-meta": {
+        "ostree.manifest-digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "ostree.container.image-config": "{\"created\":\"2026-09-22T01:35:16Z\",\"history\":[{\"created\":\"2026-09-22T01:20:00Z\",\"created_by\":\"chunkah: base layer\"}]}",
+        "ostree.importer.version": "0.15.3"
+      },
+      "base-removals": [],
+      "pinned": false,
+      "osname": "default",
+      "base-remote-replacements": {},
+      "regenerate-initramfs": false,
+      "checksum": "384892929bb2bd7a61ec17470c4f7adf9ffba309505a1de52927d99ccc6fcdff",
+      "container-image-reference-digest": "sha256:bb406b6675942516e8f223a36a9c99969070311e09060784d8108cbe1bb82c6d",
+      "requested-base-local-replacements": [],
+      "id": "default-384892929bb2bd7a61ec17470c4f7adf9ffba309505a1de52927d99ccc6fcdff.0",
+      "version": "44.20260922.1",
+      "requested-local-fileoverride-packages": [],
+      "requested-base-removals": [],
+      "requested-packages": [],
+      "serial": 0,
+      "timestamp": 1790040916,
+      "staged": false,
+      "booted": true,
+      "container-image-reference": "ostree-image-signed:docker://ghcr.io/ublue-os/aurora-dx:stable",
+      "packages": [],
+      "base-local-replacements": []
+    },
+    {
+      "unlocked": "none",
+      "requested-local-packages": [],
+      "base-commit-meta": {
+        "ostree.manifest-digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "ostree.container.image-config": "{\"created\":\"2026-09-08T02:10:00Z\",\"history\":[]}",
+        "ostree.importer.version": "0.15.3"
+      },
+      "base-removals": [],
+      "pinned": false,
+      "osname": "default",
+      "base-remote-replacements": {},
+      "regenerate-initramfs": false,
+      "checksum": "1c9d4e28b7a3f5c1d0e9b8a7c6d5e4f3a2b1c0d9384892929bb2bd7a61ec1747",
+      "container-image-reference-digest": "sha256:cc406b6675942516e8f223a36a9c99969070311e09060784d8108cbe1bb82c7d",
+      "requested-base-local-replacements": [],
+      "id": "default-1c9d4e28b7a3f5c1d0e9b8a7c6d5e4f3a2b1c0d9384892929bb2bd7a61ec1747.0",
+      "version": "44.20260908.1",
+      "requested-local-fileoverride-packages": [],
+      "requested-base-removals": [],
+      "requested-packages": [],
+      "serial": 0,
+      "timestamp": 1788745800,
+      "staged": false,
+      "booted": false,
+      "container-image-reference": "ostree-image-signed:docker://ghcr.io/ublue-os/aurora-dx:stable",
+      "packages": [],
+      "base-local-replacements": []
+    },
+    {
+      "unlocked": "none",
+      "requested-local-packages": [],
+      "base-commit-meta": {
+        "ostree.manifest-digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "ostree.container.image-config": "{\"created\":\"2026-08-30T00:05:00Z\",\"history\":[]}",
+        "ostree.importer.version": "0.15.3"
+      },
+      "base-removals": [],
+      "pinned": true,
+      "osname": "default",
+      "base-remote-replacements": {},
+      "regenerate-initramfs": false,
+      "checksum": "7a3f5c1d0e9b8a7c6d5e4f3a2b1c0d9384892929bb2bd7a61ec174701c9d4e28",
+      "container-image-reference-digest": "sha256:dd406b6675942516e8f223a36a9c99969070311e09060784d8108cbe1bb82c8e",
+      "requested-base-local-replacements": [],
+      "id": "default-7a3f5c1d0e9b8a7c6d5e4f3a2b1c0d9384892929bb2bd7a61ec174701c9d4e28.0",
+      "version": "44.20260830.0",
+      "requested-local-fileoverride-packages": [],
+      "requested-base-removals": [],
+      "requested-packages": [
+        "distrobox",
+        "fastfetch"
+      ],
+      "serial": 0,
+      "timestamp": 1787954700,
+      "staged": false,
+      "booted": false,
+      "container-image-reference": "ostree-image-signed:docker://ghcr.io/ublue-os/aurora-dx:stable",
+      "packages": [],
+      "base-local-replacements": []
+    }
+  ],
+  "transaction": null,
+  "cached-update": null,
+  "update-driver": null
+}

@@ -1,0 +1,149 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:Ostimo.App.ViewModels"
+        xmlns:views="using:Ostimo.App.Views"
+        mc:Ignorable="d" d:DesignWidth="1080" d:DesignHeight="680"
+        x:Class="Ostimo.App.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="Ostimo"
+        Width="1080" Height="680"
+        MinWidth="720" MinHeight="480"
+        FontSize="13"
+        Background="{DynamicResource AppBgBrush}"
+        Foreground="{DynamicResource TextPrimaryBrush}">
+
+  <!-- Native OS window chrome is kept on purpose (OstimoUi.md §3.3). -->
+
+  <Panel>
+
+    <!-- ============ State 1: not an rpm-ostree system (OstimoUi.md §6) ============ -->
+    <Panel IsVisible="{Binding IsNotAnRpmOstreeSystem}">
+      <StackPanel Classes="rv0"
+                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                  Spacing="18" MaxWidth="480">
+        <Border Classes="float" Width="104" Height="104" CornerRadius="32"
+                HorizontalAlignment="Center"
+                Background="{DynamicResource AccentGradientBrush}"
+                BoxShadow="0 18 50 0 #808B7BFF">
+          <Path Data="M 12 2 L 21 7 L 21 17 L 12 22 L 3 17 L 3 7 Z M 12 12 L 12 22 M 3 7 L 12 12 L 21 7"
+                Stroke="White" StrokeThickness="1.6" StrokeLineCap="Round" StrokeJoin="Round"
+                Width="48" Height="48" Stretch="Uniform"
+                HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Border>
+        <TextBlock Text="{Binding NotAnRpmOstreeSystemHeading}"
+                   FontSize="26" FontWeight="Bold"
+                   Foreground="{DynamicResource TitleGradientBrush}"
+                   HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+        <TextBlock Text="{Binding NotAnRpmOstreeSystemBody}"
+                   Classes="muted" FontSize="14" LineHeight="21"
+                   TextAlignment="Center" TextWrapping="Wrap" />
+      </StackPanel>
+    </Panel>
+
+    <!-- ============ Normal layout ============ -->
+    <Grid IsVisible="{Binding !IsNotAnRpmOstreeSystem}" RowDefinitions="Auto,*">
+
+      <!-- Transaction-in-progress banner (OstimoUi.md §6). Collapses to zero
+           height when idle and eases open when a transaction is detected. -->
+      <Border Grid.Row="0" Classes="banner" Classes.on="{Binding TransactionInProgress}" ClipToBounds="True">
+        <Border Margin="16,14,16,0" CornerRadius="16" ClipToBounds="True"
+                Background="{DynamicResource AccentMutedBrush}"
+                BorderBrush="{DynamicResource AccentBorderBrush}" BorderThickness="1">
+          <Grid RowDefinitions="Auto,Auto">
+            <Grid ColumnDefinitions="Auto,*,Auto" Margin="16,12">
+              <Panel Width="22" Height="22" Margin="0,0,12,0" VerticalAlignment="Center">
+                <Ellipse Classes="pulse" Width="10" Height="10" Fill="{DynamicResource AccentBrush}" />
+                <Ellipse Width="10" Height="10" Fill="{DynamicResource AccentBrush}" />
+              </Panel>
+              <TextBlock Grid.Column="1" Text="{Binding TransactionBannerMessage}"
+                         VerticalAlignment="Center" TextWrapping="Wrap" />
+              <Button Grid.Column="2" Classes="pill" Padding="14,7" FontSize="12"
+                      Content="Refresh" Command="{Binding RefreshFromBannerCommand}" />
+            </Grid>
+            <ProgressBar Grid.Row="1" IsIndeterminate="True" Height="3" MinHeight="3"
+                         Foreground="{DynamicResource AccentBrush}" Background="Transparent" />
+          </Grid>
+        </Border>
+      </Border>
+
+      <Grid Grid.Row="1" Margin="16,14,16,16" ColumnDefinitions="Auto,Auto,*">
+
+        <!-- Left pane: floating glass timeline -->
+        <Border Grid.Column="0" Classes="glass slidein"
+                Width="310" MinWidth="270" CornerRadius="24">
+          <Panel>
+            <views:TimelineView DataContext="{Binding Timeline}"
+                                IsVisible="{Binding $parent[Window].DataContext.HasContent}" />
+
+            <!-- Zero-deployments state (OstimoUi.md §6) -->
+            <StackPanel IsVisible="{Binding HasZeroDeployments}"
+                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                        Margin="24" Spacing="14">
+              <Border Width="60" Height="60" CornerRadius="20" HorizontalAlignment="Center"
+                      Background="{DynamicResource AccentMutedBrush}">
+                <Path Data="M 6 3 L 6 15 M 18 9 A 3 3 0 1 0 18 3 A 3 3 0 1 0 18 9 Z M 6 21 A 3 3 0 1 0 6 15 A 3 3 0 1 0 6 21 Z M 18 9 A 9 9 0 0 1 6 15"
+                      Stroke="{DynamicResource AccentBrush}" StrokeThickness="1.8"
+                      StrokeLineCap="Round" StrokeJoin="Round"
+                      Width="26" Height="26" Stretch="Uniform"
+                      HorizontalAlignment="Center" VerticalAlignment="Center" />
+              </Border>
+              <TextBlock Text="No deployments found — this is unusual; try refreshing."
+                         Classes="muted" TextAlignment="Center" TextWrapping="Wrap" />
+              <Button Classes="pill primary" HorizontalAlignment="Center"
+                      Content="Refresh" Command="{Binding Timeline.RefreshCommand}" />
+            </StackPanel>
+          </Panel>
+        </Border>
+
+        <GridSplitter Grid.Column="1" Classes="soft" Width="16" ResizeDirection="Columns" />
+
+        <!-- Right pane: cross-fades between deployments. Each selection builds
+             a fresh DeploymentDetailView, which replays its short reveal. -->
+        <Panel Grid.Column="2" MinWidth="420">
+
+          <TransitioningContentControl Content="{Binding SelectedDeployment}"
+                                       IsVisible="{Binding HasContent}"
+                                       HorizontalContentAlignment="Stretch"
+                                       VerticalContentAlignment="Stretch">
+            <TransitioningContentControl.PageTransition>
+              <CrossFade Duration="0:0:0.22" />
+            </TransitioningContentControl.PageTransition>
+            <TransitioningContentControl.ContentTemplate>
+              <DataTemplate x:DataType="vm:DeploymentViewModel">
+                <views:DeploymentDetailView />
+              </DataTemplate>
+            </TransitioningContentControl.ContentTemplate>
+          </TransitioningContentControl>
+
+          <TextBlock IsVisible="{Binding HasZeroDeployments}"
+                     Text="No deployment selected."
+                     Classes="muted"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Panel>
+
+      </Grid>
+    </Grid>
+
+  </Panel>
+
+  <Window.Styles>
+    <!-- Banner: bounded max-height so it can animate open/closed cleanly. -->
+    <Style Selector="Border.banner">
+      <Setter Property="MaxHeight" Value="0" />
+      <Setter Property="Opacity" Value="0" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <DoubleTransition Property="MaxHeight" Duration="0:0:0.4" Easing="CubicEaseOut" />
+          <DoubleTransition Property="Opacity" Duration="0:0:0.3" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="Border.banner.on">
+      <Setter Property="MaxHeight" Value="160" />
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+  </Window.Styles>
+
+</Window>

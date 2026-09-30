@@ -1,0 +1,63 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="460" d:DesignHeight="240"
+        x:Class="Ostimo.App.Views.RollbackConfirmationDialog"
+        Title="Roll back?"
+        Width="460" SizeToContent="Height"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        FontSize="13"
+        Background="{DynamicResource PopupBrush}"
+        Foreground="{DynamicResource TextPrimaryBrush}">
+
+  <!--
+    Modal confirmation before rollback (OstimoUi.md §5.1). Names the version,
+    says it takes effect after a reboot, and requires an explicit "Roll back"
+    click — never a bare OK/Yes. Modality, focus trap and Escape-as-Cancel
+    live in code-behind (unchanged).
+  -->
+  <Panel>
+    <!-- a single soft danger-tinted glow behind the icon -->
+    <Ellipse Width="320" Height="320" IsHitTestVisible="False"
+             HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-140,-150,0,0">
+      <Ellipse.Fill>
+        <RadialGradientBrush>
+          <GradientStop Color="#33F43F5E" Offset="0" />
+          <GradientStop Color="#00F43F5E" Offset="1" />
+        </RadialGradientBrush>
+      </Ellipse.Fill>
+    </Ellipse>
+
+    <Grid Margin="28" RowDefinitions="Auto,Auto" RowSpacing="26">
+
+      <Grid Classes="rv0" ColumnDefinitions="Auto,*" ColumnSpacing="18">
+        <Border Width="52" Height="52" CornerRadius="18" VerticalAlignment="Top"
+                Background="{DynamicResource DangerGradientBrush}"
+                BoxShadow="0 8 24 0 #66F43F5E">
+          <Path Data="M 1 4 L 1 10 L 7 10 M 3.51 15 A 9 9 0 1 0 5.64 5.64 L 1 10"
+                Stroke="White" StrokeThickness="2"
+                StrokeLineCap="Round" StrokeJoin="Round"
+                Width="24" Height="24" Stretch="Uniform"
+                HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Border>
+        <StackPanel Grid.Column="1" Spacing="8">
+          <TextBlock Text="Roll back to this deployment?"
+                     FontSize="19" FontWeight="Bold" TextWrapping="Wrap" />
+          <TextBlock x:Name="BodyText"
+                     Classes="muted" FontSize="14" LineHeight="21" TextWrapping="Wrap" />
+        </StackPanel>
+      </Grid>
+
+      <StackPanel Grid.Row="1" Classes="rv1" Orientation="Horizontal" Spacing="10"
+                  HorizontalAlignment="Right">
+        <Button Classes="pill" Content="Cancel" Click="OnCancelClick" IsCancel="True" />
+        <Button Classes="pill danger" Content="Roll back" Click="OnConfirmClick" IsDefault="True" />
+      </StackPanel>
+
+    </Grid>
+  </Panel>
+
+</Window>

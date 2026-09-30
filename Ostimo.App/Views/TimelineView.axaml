@@ -1,0 +1,211 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Ostimo.App.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="310" d:DesignHeight="600"
+             x:Class="Ostimo.App.Views.TimelineView"
+             x:DataType="vm:TimelineViewModel">
+
+  <!--
+    Left pane. Deployments are drawn as a git-graph style rail: one continuous
+    vertical line with a node per deployment. Nodes carry the state (glyph
+    shape + color + motion, never color alone — OstimoUi.md §7):
+      Booted        -> glowing gradient node with a radar pulse
+      Staged        -> small node inside an orbiting dashed ring
+      Pinned        -> amber pin badge
+      Booted+pinned -> booted node with an amber badge at its corner
+      Otherwise     -> hollow node
+    Deployments arrive newest-first from status —json; no re-sorting here.
+  -->
+  <UserControl.Resources>
+    <!-- Row container: no chrome of its own. Selection / hover visuals are
+         painted by the card inside the row template (see styles below). -->
+    <ControlTheme x:Key="TimelineItemTheme" TargetType="ListBoxItem">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <ContentPresenter Name="PART_ContentPresenter"
+                            Background="{TemplateBinding Background}"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Padding="{TemplateBinding Padding}"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch" />
+        </ControlTemplate>
+      </Setter>
+    </ControlTheme>
+  </UserControl.Resources>
+
+  <Grid RowDefinitions="Auto,*,Auto">
+
+    <!-- Header: brand + refresh -->
+    <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="20,22,14,14">
+      <Border Width="40" Height="40" CornerRadius="13"
+              Background="{DynamicResource AccentGradientBrush}"
+              BoxShadow="0 6 18 0 #668B7BFF">
+        <Path Data="M 6 3 L 6 15 M 18 9 A 3 3 0 1 0 18 3 A 3 3 0 1 0 18 9 Z M 6 21 A 3 3 0 1 0 6 15 A 3 3 0 1 0 6 21 Z M 18 9 A 9 9 0 0 1 6 15"
+              Stroke="White" StrokeThickness="1.8" StrokeLineCap="Round" StrokeJoin="Round"
+              Width="20" Height="20" Stretch="Uniform"
+              HorizontalAlignment="Center" VerticalAlignment="Center" />
+      </Border>
+      <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center" Spacing="1">
+        <TextBlock Text="Ostimo" FontSize="18" FontWeight="Bold"
+                   Foreground="{DynamicResource TitleGradientBrush}" />
+        <TextBlock Text="Deployments" Classes="muted" FontSize="12" />
+      </StackPanel>
+      <Button Grid.Column="2" Classes="pill icon"
+              Command="{Binding RefreshCommand}"
+              ToolTip.Tip="Refresh">
+        <Path Data="M 23 4 L 23 10 L 17 10 M 20.49 15 A 9 9 0 1 1 18.37 5.64 L 23 10"
+              Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="2"
+              StrokeLineCap="Round" StrokeJoin="Round"
+              Width="16" Height="16" Stretch="Uniform"
+              Classes.spinning="{Binding IsRefreshing}" />
+      </Button>
+    </Grid>
+
+    <!-- The timeline. SelectedItem is two-way so the ViewModel can default to
+         the booted deployment after a refresh (OstimoUi.md §3.1). -->
+    <ListBox Grid.Row="1"
+             ItemsSource="{Binding Deployments}"
+             SelectedItem="{Binding SelectedDeployment}"
+             ItemContainerTheme="{StaticResource TimelineItemTheme}"
+             Background="Transparent"
+             BorderThickness="0"
+             Padding="6,0,4,10"
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+      <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="vm:DeploymentViewModel">
+          <Grid ColumnDefinitions="40,*">
+
+            <!-- The rail: full row height so neighbouring rows connect. -->
+            <Rectangle Grid.Column="0" Width="2" HorizontalAlignment="Center"
+                       Fill="{DynamicResource RailBrush}" />
+
+            <!-- Node -->
+            <Panel Grid.Column="0" Width="28" Height="28"
+                   HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,21,0,0">
+
+              <!-- Plain: hollow node (opaque fill so it masks the rail) -->
+              <Ellipse Width="12" Height="12"
+                       Fill="{DynamicResource PopupBrush}"
+                       Stroke="{DynamicResource TextTertiaryBrush}" StrokeThickness="2"
+                       IsVisible="{Binding ShowPlainOutlineGlyph}" />
+
+              <!-- Staged: orbiting dashed ring + smaller core -->
+              <Ellipse Classes="orbit" Width="24" Height="24"
+                       Stroke="{DynamicResource Accent2Brush}" StrokeThickness="1.5"
+                       StrokeDashArray="2,2.5"
+                       IsVisible="{Binding IsStaged}" />
+              <Ellipse Width="9" Height="9"
+                       Fill="{DynamicResource Accent2Brush}"
+                       IsVisible="{Binding IsStaged}" />
+
+              <!-- Booted: radar pulse + glowing gradient core -->
+              <Ellipse Classes="pulse" Width="16" Height="16"
+                       Fill="{DynamicResource AccentBrush}"
+                       IsVisible="{Binding IsBooted}" />
+              <Border Width="16" Height="16" CornerRadius="8"
+                      Background="{DynamicResource AccentGradientBrush}"
+                      BoxShadow="0 0 14 2 #998B7BFF"
+                      IsVisible="{Binding IsBooted}" />
+
+              <!-- Pinned (not booted): amber pin disc -->
+              <Border Width="24" Height="24" CornerRadius="12"
+                      Background="{DynamicResource PinnedMutedBrush}"
+                      BorderBrush="{DynamicResource PinnedBrush}" BorderThickness="1"
+                      IsVisible="{Binding IsPinnedGlyphPrimary}">
+                <Path Data="M 12 17 L 12 22 M 5 17 L 19 17 L 17 13 L 17 5 L 19 3 L 5 3 L 7 5 L 7 13 Z"
+                      Stroke="{DynamicResource PinnedBrush}" StrokeThickness="2"
+                      StrokeLineCap="Round" StrokeJoin="Round"
+                      Width="11" Height="11" Stretch="Uniform"
+                      HorizontalAlignment="Center" VerticalAlignment="Center" />
+              </Border>
+
+              <!-- Booted AND pinned: amber badge at the corner -->
+              <Border Width="11" Height="11" CornerRadius="6"
+                      Background="{DynamicResource PinnedBrush}"
+                      BorderBrush="{DynamicResource PopupBrush}" BorderThickness="2"
+                      HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                      IsVisible="{Binding ShowPinBadgeOverlay}" />
+            </Panel>
+
+            <!-- Card -->
+            <Border Grid.Column="1" Classes="rowcard" Margin="2,5,8,5" CornerRadius="16">
+              <Panel>
+                <Border Classes="rowglow" CornerRadius="16"
+                        Background="{DynamicResource AccentWashBrush}"
+                        BorderBrush="{DynamicResource AccentBorderBrush}" BorderThickness="1"
+                        IsHitTestVisible="False" />
+                <StackPanel Margin="14,11" Spacing="3">
+                  <TextBlock Text="{Binding Version}"
+                             FontSize="16" FontWeight="SemiBold"
+                             TextTrimming="CharacterEllipsis"
+                             ToolTip.Tip="{Binding Version}" />
+                  <TextBlock Text="{Binding SecondaryLine}" Classes="muted" FontSize="12" />
+                </StackPanel>
+              </Panel>
+            </Border>
+
+          </Grid>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <!-- Manual-refresh failure notice (OstimoUi.md §6) -->
+    <Border Grid.Row="2" Margin="12,0,12,12" Padding="14,10" CornerRadius="14"
+            Background="{DynamicResource DangerMutedBrush}"
+            BorderBrush="{DynamicResource DangerBorderBrush}" BorderThickness="1"
+            IsVisible="{Binding RefreshErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+      <TextBlock Text="{Binding RefreshErrorMessage}" FontSize="12" TextWrapping="Wrap" />
+    </Border>
+
+  </Grid>
+
+  <UserControl.Styles>
+
+    <!-- Row card: hover nudges it right and washes it; selection lights it up
+         with the accent wash + border. The wash is a separate overlay whose
+         opacity animates (gradients can't be cross-faded directly). -->
+    <Style Selector="Border.rowcard">
+      <Setter Property="RenderTransform" Value="translateX(0px)" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2" Easing="CubicEaseOut" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="Border.rowglow">
+      <Setter Property="Opacity" Value="0" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <DoubleTransition Property="Opacity" Duration="0:0:0.22" />
+        </Transitions>
+      </Setter>
+    </Style>
+
+    <Style Selector="ListBoxItem:pointerover Border.rowcard">
+      <Setter Property="RenderTransform" Value="translateX(3px)" />
+    </Style>
+    <Style Selector="ListBoxItem:pointerover Border.rowglow">
+      <Setter Property="Opacity" Value="0.45" />
+    </Style>
+    <Style Selector="ListBoxItem:selected Border.rowglow">
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="ListBoxItem:selected Border.rowcard">
+      <Setter Property="RenderTransform" Value="translateX(3px)" />
+      <Setter Property="BoxShadow" Value="0 8 26 0 #338B7BFF" />
+    </Style>
+    <Style Selector="ListBoxItem:focus-visible Border.rowglow">
+      <Setter Property="Opacity" Value="1" />
+      <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+      <Setter Property="BorderThickness" Value="2" />
+    </Style>
+
+  </UserControl.Styles>
+
+</UserControl>
