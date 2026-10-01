@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Ostimo.App/Ostimo.App.csproj" />
+    <Project Path="src/Ostimo.Core/Ostimo.Core.csproj" />
+    <Project Path="src/Ostimo.Tests/Ostimo.Tests.csproj" />
+  </Folder>
+</Solution>
